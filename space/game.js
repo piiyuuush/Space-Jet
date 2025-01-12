@@ -15,9 +15,9 @@ let jet = {
 }; // Jet object stores its x, y coords and height/width
 
 let jetImg = new Image(); // Create an img object for jet
-jetImg.src = "/jet.png";
+jetImg.src = "jet.png";
 
-document.addEventListener('keydown', move);
+document.addEventListener('keydown', start);
 
 //initializing variables required to create obstacles
 let objects = [];
@@ -27,8 +27,8 @@ let obstacleSpeed = 2;
 /*
   Function to create obstacles:
   The `occupied` array tracks whether a tile is occupied by an obstacle; initially, no tiles are occupied.
-  We generate a random number `x` between 1 and 4 to determine the number of spaces/empty areas in a row, ensuring at least one space for the player to navigate through. 
-  This results in creating `columns - x` obstacles in the row.
+  We generate a random number `x` between 1 and 4 to determine the number of spaces/empty areas in a row, 
+  ensuring at least one space for the player to navigate through. This results in creating `columns - x` obstacles in the row.
   The loop iterates to create the required number of obstacles. For each obstacle, 
   a `while` loop finds a suitable position by selecting a random tile index (`rndmTile`). 
   If the tile at `rndmTile` is unoccupied, we create an obstacle at `x: rndmTile * tileSize` and `y: -1 * tileSize` 
@@ -40,6 +40,7 @@ let obstacleSpeed = 2;
 function randomObjs() {
     let occupied = [false, false, false, false, false]; // Keep track of occupied tiles
     let x = Math.floor(Math.random() * 4 + 1); // Random number of obstacles to be generated
+    const randomInterval = Math.random() * 500 + 500; // random interval of time between 1-2 seconds
     for (let i = 0; i < columns - x; i++) {
         positionFound = false;
         while (!positionFound) {
@@ -56,6 +57,7 @@ function randomObjs() {
             }
         }
     }
+    setTimeout(randomObjs, randomInterval); // calls itself at random interval of time
 }
 
 // Function to draw obstacles
@@ -72,11 +74,15 @@ window.onload = function() {
     jetImg.onload = function() {
         context.drawImage(jetImg, jet.x, jet.y, jet.width, jet.height); // Draw jet once image is loaded
     };
-
-    randomObjs(); // Generate obstacles at random positions
     requestAnimationFrame(update); // This function starts the loop for frame updates
 };
-
+//game will start when space bar is pressed
+function start(){
+    document.getElementById("txt").innerHTML = ""
+    document.removeEventListener('keydown', start);
+    document.addEventListener('keydown', move);
+    randomObjs();
+}
 // Function to update the canvas every frame
 function update() {
     
@@ -84,7 +90,7 @@ function update() {
     objDraw(); // Draw obstacles every frame
     context.drawImage(jetImg, jet.x, jet.y, jet.width, jet.height); // Draw jet
     obsMove(); // Move obstacles downwards
-    nextWave(); // create next wave
+    // nextWave(); // create next wave
     requestAnimationFrame(update); // Continue updating the frame
 }
 
@@ -109,15 +115,16 @@ function obsMove() {
     // Remove obstacles that have moved outside the screen
     if (objects.length > 0 && objects[0].y >= tileSize * rows) {
         objects.shift(); // Removes one element from object array that is at 0 index
-        console.log(objects);
     }
 }
 
 // checks for every other row whether first row of obstacles is in odd y coords
 // if yes then it will create another wave
-function nextWave(){
-        if(objects[0].y === 1*tileSize || objects[0].y === 3*tileSize || 
-            objects[0].y === 5*tileSize || objects[0].y === 7*tileSize){
-                randomObjs();
-    }
-}
+
+
+// function nextWave(){
+//         if(objects[0].y === 1*tileSize || objects[0].y === 3*tileSize || 
+//             objects[0].y === 5*tileSize || objects[0].y === 7*tileSize){
+//                 randomObjs();
+//     }
+// }
