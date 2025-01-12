@@ -75,6 +75,7 @@ window.onload = function() {
         context.drawImage(jetImg, jet.x, jet.y, jet.width, jet.height); // Draw jet once image is loaded
     };
     requestAnimationFrame(update); // This function starts the loop for frame updates
+    // randomObjs();
 };
 //game will start when space bar is pressed
 function start(){
